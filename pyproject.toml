@@ -1,0 +1,4 @@
+[project]
+name = 'ml_alloy_halide_perovskites'
+dynamic = ['version']
+requires-python = '>=3.8'

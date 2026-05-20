@@ -6,7 +6,7 @@ Predicting the electronic band gap and thermodynamic stability of double perovsk
 
 ## Motivation
 
-Halide double perovskites are a promising class of lead-free semiconductors for photovoltaic and optoelectronic applications. Alloying on the B-site ($AA'BB'X_{6}$ -> $AA'(B_{1-x}B'_{x})X_{6}$) enables continuous tuning of the band gap, but the relationship between composition and electronic structure is non-linear and chemistry-dependent. DFT calculations are accurate but expensive at screening scale.
+Halide double perovskites are a promising class of lead-free semiconductors for photovoltaic and optoelectronic applications. Alloying on the B-site ($AA'BB'X_{6}$ -> $AA'B_{1-x}B'_{x}X_{6}$) enables continuous tuning of the band gap, but the relationship between composition and electronic structure is non-linear and chemistry-dependent. DFT calculations are accurate but expensive at screening scale.
 
 This project builds an ML pipeline to predict band gap and stability descriptors from composition and DOS-derived features, enabling rapid screening across a large alloy space without additional DFT calculations.
 
@@ -15,7 +15,7 @@ This project builds an ML pipeline to predict band gap and stability descriptors
 ## Dataset
 
 ~6500 DFT calculations (PBE functional, VASP) across a systematic alloy space, structure optimization with MLIP (DOI: https://doi.org/10.1103/n6dj-hlzm):
-- **Alloys:** $AA'(B_{1-x}B'_{x})X_{6}$ at x = 0.25, 0.50, 0.75 for all B-site pairs and halides (F, Cl, Br, I)
+- **Alloys:** $AA'B_{1-x}B'_{x}X_{6}$ at x = 0.25, 0.50, 0.75 for all B-site pairs and halides (F, Cl, Br, I)
 - **Pure phases:** $AA'B_{2}X_{6}$ and $AA'B'_{2}X_{6}$ endpoints for each alloy series
 - **Targets:** band gap Eg (eV), formation enthalpy dHf, decomposition enthalpy dHd
 - **Features:** spin-resolved DOS band edge energies and orbital character (s/p/d) per element

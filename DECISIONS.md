@@ -1,11 +1,11 @@
-# ML Pipeline — Decision Log
+# ML Pipeline Decision Log
 
 ## Data
 
 **Input files**
-- `dos_features.parquet` — DOS-derived band edge features for all formulas (alloys + pure phases)
-- `alloy_df.csv` / `alloy_df.parquet` — alloy compositions with Eg, dHf, dHd from DFT
-- `pure_phases_df.csv` — pure phase compositions
+- `dos_features.parquet` - DOS-derived band edge features for all formulas (alloys + pure phases)
+- `alloy_df.csv` / `alloy_df.parquet` - alloy compositions with Eg, dHf, dHd from DFT
+- `pure_phases_df.csv` - pure phase compositions
 
 **File format: parquet as primary, CSV as secondary**
 - Parquet preserves dtypes on reload (`is_alloy` as bool, `orb_idx` as int, NaN stays NaN)
@@ -20,7 +20,7 @@
 - `Efermi` added back so VBM/CBM are in absolute eV, consistent with DFT reference
 
 **Orbital character encoding**
-- `_orb_idx`: integer — `0=s, 1=p, 2=d`; `-1` = element present but below contribution threshold; `NaN` = band edge absent for this spin channel
+- `_orb_idx`: int `0=s, 1=p, 2=d`; `-1` = element present but below contribution threshold; `NaN` = band edge absent for this spin channel
 - `-1` chosen over `NaN` to prevent `fillna(0)` silently converting non-contributors into s-orbital contributors during preprocessing
 
 **Pure phase identifiers on alloy rows**
@@ -37,7 +37,7 @@
 
 **Metal/semiconductor boundary**
 - ~485 of ~6500 materials have Eg = 0 (metallic)
-- ~0.1 eV discrepancy near Eg = 0 acceptable — arises from DOS grid discretization
+- ~0.1 eV discrepancy near Eg = 0 acceptable. This arises from multiple sources including PBE's false metal problem and DOS grid discretization
 - Practical implication: model may struggle at metal/semiconductor boundary; expected and acceptable for optoelectronics target (Eg > 1 eV)
 - Decision deferred: train on all materials, or classify metal/semiconductor first, then regress
 
@@ -45,8 +45,8 @@
 
 ## Data mismatch
 
-- 163 formulas in `alloy_df`/`pure_phases_df` with no DOS file — no DOS features available for these; cannot use DOS-feature model for prediction
-- 385 formulas in `dos_features.parquet` not in `alloy_df`/`pure_phases_df` — have DOS features but no DFT Eg label; these are inference targets after training
+- 163 formulas in `alloy_df`/`pure_phases_df` with no DOS file. No DOS features available for these; cannot use DOS-feature model for prediction
+- 385 formulas in `dos_features.parquet` not in `alloy_df`/`pure_phases_df`. Have DOS features but no DFT Eg label; these are inference targets after training
 - Training set is the ~6100-formula intersection of both sources
 
 ---
@@ -54,7 +54,7 @@
 ## Bug fixes
 
 **`parse_formula` halide regex** (`build_dataframes.py`)
-- Original: `re.search(r'(Cl|Br|I|F)')` matched `F` inside `Fe` before the actual halide — e.g. `RbCsFe2I6` → `X='F'` instead of `X='I'`
+- Original: `re.search(r'(Cl|Br|I|F)')` matched `F` inside `Fe` before the actual halide, e.g. `RbCsFe2I6` → `X='F'` instead of `X='I'`
 - Fix: `re.findall(r'[A-Z][a-z]?', formula)` on the whole formula string; take the last element as X
 - Requires re-running `build_dataframes.py` to regenerate `alloy_df.parquet` / `pure_phases_df.parquet`
 
@@ -64,7 +64,7 @@
 
 **Parity plot (DOS-derived gap vs DFT gap)**
 - Strong agreement across full gap range
-- Small scatter at Eg ≈ 0 (~0.1 eV) — see metal/semiconductor boundary note above
+- Small scatter at Eg ≈ 0 (~0.1 eV), see metal/semiconductor boundary note above
 
 **Target variable distribution**
 - Eg distribution is right-skewed with a spike at Eg=0 (metallic fraction)
@@ -72,21 +72,21 @@
 
 **Bowing parameter analysis**
 - Fitted per alloy series using closed-form 1-parameter least squares: `b = dot(w, residual) / dot(w, w)` where `w = x*(1-x)`
-- Bowing fit significantly improves over linear interpolation but leaves substantial scatter — motivates ML
+- Bowing fit significantly improves over linear interpolation but leaves substantial (and possibly unphysical) scatter at Eg ≈ 0. This motivates ML
 - Halide dependence weak (B-site alloying, not X-site); ranking F > Cl > Br > I attributed to TM stabilisation by electronegative halides
-- TM B-site compositions show large, scattered b (bimodal distribution) — single bowing parameter insufficient; motivates DOS orbital features in ML
-- Negative b (upward bowing) likely a model artefact from the 3-point quadratic fit, not a physical effect
+- TM B-site compositions show large, scattered b. This signals that a single bowing parameter is insufficient, and motivates DOS orbital features in ML
+- Negative b (upward bowing) likely a model artifact arising from DFT band gap noise, not a physical effect
 
 **Stability EDA (tolerance factors vs dHd)**
-- No correlation between Goldschmidt t and dHd — expected, t was derived for oxide perovskites
-- Weak positive correlation between Bartel τ and dHd — consistent with Bartel et al. 2019
+- No correlation between Goldschmidt t and dHd. Expected, t was derived for oxide perovskites
+- Weak positive correlation between Bartel τ and dHd. Consistent with Bartel et al. 2019
 - Neither t nor τ gives tight dHd prediction; motivates ML with richer electronic/elemental features
 
 **Shannon radii for tolerance factors**
 - Used `Species.get_shannon_radius(cn, spin, radius_type)` with CN=XII for A-site (+1), CN=VI for B-site (+2) and X-site (-1), High Spin default
 - ~2% of formulas skipped due to missing radii or missing dHd
 - Supplementary ML-predicted radii added manually for elements absent from pymatgen tables
-- Alloy B-site radius: weighted geometric mean `r_B = r_B1^(1-x) * r_B2^x` — reduces to `√(r_B1·r_B2)` at x=0.5, consistent with Bartel et al.
+- Alloy B-site radius: weighted geometric mean `r_B = r_B1^(1-x) * r_B2^x` consistent with Bartel et al.
 
 ---
 

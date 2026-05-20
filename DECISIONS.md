@@ -20,8 +20,10 @@
 - `Efermi` added back so VBM/CBM are in absolute eV, consistent with DFT reference
 
 **Orbital character encoding**
-- `_orb_idx`: int `0=s, 1=p, 2=d`; `-1` = element present but below contribution threshold; `NaN` = band edge absent for this spin channel
+- `_orb_idx`: int `0=s, 1=p, 2=d`; `-1` = element present but `el_sum < DOS_NOISE_FLOOR`; `NaN` = band edge absent for this spin channel
 - `-1` chosen over `NaN` to prevent `fillna(0)` silently converting non-contributors into s-orbital contributors during preprocessing
+- Contribution threshold uses `DOS_NOISE_FLOOR` (absolute, 0.0001 states/eV/cell) for consistency with band edge detection — replaced earlier relative `CONTRIB_THRESHOLD = 0.05`
+- `_frac` values are normalized among contributing elements only, so they sum to 1 per `(spin, edge)` — earlier implementation normalised against total DOS, causing fracs to sum to less than 1 when any element was below threshold
 
 **Pure phase identifiers on alloy rows**
 - Each alloy row carries `formula_0`, `formula_100` (end-member formula strings) and `x_frac`
@@ -93,7 +95,7 @@
 ## Pending decisions
 
 - Metal/semiconductor split vs single regression model
-- Which spin channel features to use (both, min-gap channel only, average)
+- ~~Which spin channel features to use~~ → **Keep both spin channels.** Pearson r between up and down channel frac values is near zero for most TM B-site elements (Co≈0.01, Fe≈0.00, Mn≈0.05, Ti≈0.17, V≈0.05) due to magnetic exchange splitting. Up and down channels carry distinct information and cannot be reduced to one.
 - Whether to include `x_frac` as a feature (direct physical meaning: B-site mixing ratio)
 - Matminer elemental features to add at step 3
 - Feature-target correlation: DOS features to be correlated with Eg before step 3; full heatmap after matminer feature engineering

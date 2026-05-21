@@ -1,12 +1,12 @@
 # Machine Learning for Band Gap Prediction in Alloy Halide Perovskites
 
-Predicting the electronic band gap and thermodynamic stability of double perovskite alloys $AA'(B_{1-x}B'_{x})X_{6}$ using features derived from DFT density-of-states calculations.
+Predicting the electronic band gap and thermodynamic stability of B-site alloy halide perovskites $AA'(B_{1-x}B'_{x})X_{6}$ using features derived from DFT density-of-states calculations.
 
 ---
 
 ## Motivation
 
-Halide double perovskites are a promising class of lead-free semiconductors for photovoltaic and optoelectronic applications. Alloying on the B-site ($AA'BB'X_{6}$ -> $AA'B_{1-x}B'_{x}X_{6}$) enables continuous tuning of the band gap, but the relationship between composition and electronic structure is non-linear and chemistry-dependent. DFT calculations are accurate but expensive at screening scale.
+Halide double perovskites are a promising class of lead-free semiconductors for photovoltaic and optoelectronic applications. Alloying on the B-site ($AA'BB'X_{6}$ -> $AA'B_{1-x}B'_{x}X_{6}$) enables band gap tuning, but the relationship between composition and electronic structure is non-linear and chemistry-dependent. DFT calculations are accurate but expensive at screening scale.
 
 This project builds an ML pipeline to predict band gap and stability descriptors from composition and DOS-derived features, enabling rapid screening across a large alloy space without additional DFT calculations.
 
@@ -82,16 +82,12 @@ ML_alloy_halide_perovskites/
 
 **Environment:** Python >=3.8, conda environment `pmg`
 
-```bash
-conda create -n pmg python=3.8
-conda activate pmg
-pip install pymatgen matminer pandas numpy scipy matplotlib
-pip install -e .
+compile check WIP
 ```
-
-**Running on WSL (recommended for large file I/O):**
-```bash
-wsl bash -i -c "conda run -n pmg python extract_dos_features.py"
+# conda create -n pmg python=3.8
+# conda activate pmg
+# pip install pymatgen matminer pandas numpy scipy matplotlib
+# pip install -e .
 ```
 
 **Order of execution:**

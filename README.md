@@ -26,25 +26,32 @@ Data files are too large for GitHub. The extraction scripts and assembled DataFr
 
 ## Pipeline
 
+*Check 4. and make changes, 4 possible combinations of DOS information, composition ElementProperty, individual ElementProperty*
+
 ```
 1. Data extraction        extract_dos_features.py
-   └─ Raw DFT DOS JSONs -> band edge energies, orbital character -> dos_features.parquet
+   - Raw DFT DOS JSONs -> band edge energies, orbital character -> dos_features.parquet
 
 2. DataFrame assembly     build_dataframes.py  (local, not in repo)
-   └─ DFT result JSONs -> alloy_df.parquet, pure_phases_df.parquet
+   - DFT result JSONs -> alloy_df.parquet, pure_phases_df.parquet
 
-3. EDA                    exploratory_analysis.ipynb
-   ├─ Pipeline verification (DOS-derived Eg vs DFT Eg parity)
-   ├─ Target distribution (Eg histogram, metallic fraction)
-   ├─ Bowing parameter analysis (linear interpolation vs fitted b)
-   ├─ Stability EDA (Goldschmidt t and Bartel τ vs dHd)
-   └─ Feature-target correlation (Pearson r, spin channel redundancy check)
+3. EDA                    2_exploratory_analysis.ipynb
+   - Pipeline verification (DOS-derived Eg vs DFT Eg parity)
+   - Target distribution (Eg histogram, metallic fraction)
+   - Bowing parameter analysis (linear interpolation vs fitted b)
+   - Stability EDA (Goldschmidt t and Bartel τ vs dHd)
+   - Feature-target correlation (Pearson r, spin channel redundancy check)
 
-4. Feature engineering    [in progress]
-   └─ Matminer elemental descriptors + DOS features -> ML-ready feature matrix
+4. Feature engineering    3_feature_engineering.ipynb
+   - Option A: full-composition ElementProperty MAGPIE preset (22 properties x 6 stats = 132 features)
+   - Option B: per-site MagpieData lookup for B1, B2, X sites (7 properties x 3 sites + x_frac = 22 features)
+   - DOS features + Option B site features -> feature_matrix.parquet
 
 5. Modelling              [planned]
-   └─ Baseline regression -> gradient boosting -> neural network
+   - Use case 1 (full element DOS contribution features): upper bound on model performance
+   - Use case 2 (endpoint DOS + composition only): practical screening model with pure phase DFT results only
+   - Ablation 1 -> 2 quantifies how much alloy-specific electronic structure is non-interpolable from endpoints
+   - Baseline regression -> gradient boosting -> neural network
 ```
 
 ---
@@ -64,41 +71,44 @@ Data files are too large for GitHub. The extraction scripts and assembled DataFr
 
 ```
 ML_alloy_halide_perovskites/
-├── README.md
-├── DECISIONS.md                  # Design decisions and EDA findings log
-├── exploratory_analysis.ipynb    # EDA notebook
-├── alloy_df.parquet/.csv         # Alloy compositions with DFT targets
-├── pure_phases_df.parquet/.csv   # Pure phase compositions with DFT targets
-├── dos_features.parquet/.csv     # DOS-derived band edge features
-├── alloy_space_overall_dict_EMPTY.json  # Alloy series groupings
-└── src/
-    └── ml_alloy_halide_perovskites/
-        └── helper_functions.py   # Shared utilities
+- README.md
+- DECISIONS.md                         # Design decisions and EDA findings log
+- 2_exploratory_analysis.ipynb         # EDA notebook
+- 3_feature_engineering.ipynb         # Feature engineering notebook
+- alloy_df.parquet/.csv                # Alloy compositions with DFT targets
+- pure_phases_df.parquet/.csv          # Pure phase compositions with DFT targets
+- dos_features.parquet/.csv            # DOS-derived band edge features
+- feature_matrix.parquet/.csv         # ML-ready feature matrix (DOS + site elemental features)
+- alloy_space_overall_dict_EMPTY.json  # Alloy series groupings
+- src/
+    - ml_alloy_halide_perovskites/
+        - helper_functions.py          # Shared utilities (WIP)
 ```
 
 ---
 
 ## Reproducing the Results
 
-**Environment:** Python >=3.8, conda environment `pmg`
-
-compile check WIP
+**Environment:**
 ```
-# conda create -n pmg python=3.8
-# conda activate pmg
-# pip install pymatgen matminer pandas numpy scipy matplotlib
-# pip install -e .
+Python >=3.8
+matminer
+pandas
+numpy
+scipy
+matplotlib
 ```
 
 **Order of execution:**
 1. `build_dataframes.py` : generates `alloy_df.parquet`, `pure_phases_df.parquet` (requires local DFT data)
 2. `extract_dos_features.py` : generates `dos_features.parquet` (requires local DFT data)
-3. `exploratory_analysis.ipynb` : EDA, reads from parquet files
+3. `2_exploratory_analysis.ipynb` : EDA, reads from parquet files
+4. `3_feature_engineering.ipynb` : Feature engineering — assembles DOS features and matminer elemental descriptors into feature_matrix.parquet
 
 ---
 
 ## References
-*add doi*
+*WIP add doi*
 - Bartel et al. (2019) : τ tolerance factor for perovskite stability. *Science Advances*
 - Shannon (1976) : Revised ionic radii. *Acta Crystallographica*
 - Ong et al. (2013) : pymatgen. *Computational Materials Science*

@@ -87,15 +87,15 @@
 **Shannon radii for tolerance factors**
 - Used `Species.get_shannon_radius(cn, spin, radius_type)` with CN=XII for A-site (+1), CN=VI for B-site (+2) and X-site (-1), High Spin default
 - ~2% of formulas skipped due to missing radii or missing dHd
-- Supplementary ML-predicted radii added manually for elements absent from pymatgen tables
+- Supplemented ML-predicted radii for elements absent from pymatgen tables (cite ML Shannon radii paper)
 - Alloy B-site radius: weighted geometric mean `r_B = r_B1^(1-x) * r_B2^x` consistent with Bartel et al.
 
 ---
 
 ## Pending decisions
 
-- Metal/semiconductor split vs single regression model
+- ~~Metal/semiconductor split vs single regression model~~ **Keep both.**
 - ~~Which spin channel features to use~~ → **Keep both spin channels.** Pearson r between up and down channel frac values is near zero for most TM B-site elements (Co≈0.01, Fe≈0.00, Mn≈0.05, Ti≈0.17, V≈0.05) due to magnetic exchange splitting. Up and down channels carry distinct information and cannot be reduced to one.
-- Whether to include `x_frac` as a feature (direct physical meaning: B-site mixing ratio)
-- Matminer elemental features to add at step 3
+- ~~Whether to include `x_frac` as a feature (direct physical meaning: B-site mixing ratio)~~ **Use x_frac**
+- ~~Matminer elemental features to add at step 3~~ **moved to feature engineering**
 - Feature-target correlation: DOS features to be correlated with Eg before step 3; full heatmap after matminer feature engineering

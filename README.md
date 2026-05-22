@@ -43,9 +43,10 @@ Data files are too large for GitHub. The extraction scripts and assembled DataFr
    - Feature-target correlation (Pearson r, spin channel redundancy check)
 
 4. Feature engineering    3_feature_engineering.ipynb
-   - Option A: full-composition ElementProperty MAGPIE preset (22 properties x 6 stats = 132 features)
-   - Option B: per-site MagpieData lookup for B1, B2, X sites (7 properties x 3 sites + x_frac = 22 features)
-   - DOS features + Option B site features -> feature_matrix.parquet
+   - 1. DOS features from Data Extraction (band edge energies, orbital character, Efermi)
+   - 2. ElementProperty: Full composition using MAGPIE preset (22 properties x 6 stats = 132 features)
+   - 3. ElementProperty: per-site MagpieData lookup for A1, A2, B1, B2, X sites (7 properties x 5 sites = 35 features)
+   - 3 feature sets, 4 combinations (1, 1+2, 1+3, 1+2+3)
 
 5. Modelling              [planned]
    - Use case 1 (full element DOS contribution features): upper bound on model performance

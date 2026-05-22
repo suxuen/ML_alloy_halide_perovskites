@@ -59,7 +59,7 @@ Data files are too large for GitHub. The extraction scripts and assembled DataFr
 ## Key EDA Findings
 
 - **DOS-derived band gap** agrees well with DFT values across the full gap range (0–7 eV), validating the extraction pipeline
-- **Target distribution:** Eg is right-skewed with ~7% metallic systems (Eg=0); F/Cl compositions span higher gaps than Br/I
+- **Target distribution:** Eg is skewed towards 0 eV with ~7% metallic systems (Eg=0); F/Cl compositions span higher gaps than Br/I
 - **Bowing analysis:** a single bowing parameter b improves over linear interpolation but leaves substantial scatter, particularly for TM-containing B-site alloys. TM containing B-site alloys also produce large, scattered bowing parameters consistent with d-orbital character not following simple interpolation of band gaps. This motivates ML to learn complex band gap behavior in alloys
 - **Tolerance factors:** Bartel τ shows a weak positive correlation with dHd (consistent with Bartel et al. 2019); Goldschmidt t shows no correlation, as expected for halide perovskites. Neither descriptor is sufficient alone, motivating ML with richer electronic features
 - **Feature-target correlation:** Pearson r indicates Ag VBM contribution is the strongest single predictor of Eg (Pearson r ≈ 0.85). However alloy perovskite band gap behavior cannot be mapped linearly, as TM contributions to band edges show near-zero Pearson r due to step-like gap collapse rather than linear scaling (as shown for the scatter for 'Cr_down_cbm_frac'). This motivates tree-based models instead of feature removal, as band edge character is undoubtedly important for learning band gaps.
@@ -74,11 +74,11 @@ ML_alloy_halide_perovskites/
 - README.md
 - DECISIONS.md                         # Design decisions and EDA findings log
 - 2_exploratory_analysis.ipynb         # EDA notebook
-- 3_feature_engineering.ipynb         # Feature engineering notebook
+- 3_feature_engineering.ipynb          # Feature engineering notebook
 - alloy_df.parquet/.csv                # Alloy compositions with DFT targets
 - pure_phases_df.parquet/.csv          # Pure phase compositions with DFT targets
 - dos_features.parquet/.csv            # DOS-derived band edge features
-- feature_matrix.parquet/.csv         # ML-ready feature matrix (DOS + site elemental features)
+- feature_matrix.parquet/.csv          # ML-ready feature matrix (DOS + site elemental features)
 - alloy_space_overall_dict_EMPTY.json  # Alloy series groupings
 - src/
     - ml_alloy_halide_perovskites/
@@ -109,7 +109,7 @@ matplotlib
 
 ## References
 *WIP add doi*
-- Bartel et al. (2019) : τ tolerance factor for perovskite stability. *Science Advances*
-- Shannon (1976) : Revised ionic radii. *Acta Crystallographica*
-- Ong et al. (2013) : pymatgen. *Computational Materials Science*
-- Ward et al. (2018) : matminer. *Computational Materials Science*
+- Bartel et al. (2019) : New tolerance factor to predict the stability of perovskite oxides and halides. *Science Advances* https://doi.org/10.1126/sciadv.aav0693
+- Shannon (1976) : Revised effective ionic radii and systematic studies of interatomic distances in halides and chalcogenides. *Acta Crystallographica* https://doi.org/10.1107/S0567739476001551
+- Ong et al. (2013) : Python Materials Genomics (pymatgen): A robust, open-source python library for materials analysis. *Computational Materials Science* https://doi.org/10.1016/j.commatsci.2012.10.028
+- Ward et al. (2018) : Matminer: An open source toolkit for materials data mining. *Computational Materials Science* https://doi.org/10.1016/j.commatsci.2018.05.018

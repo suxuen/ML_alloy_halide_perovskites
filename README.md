@@ -29,7 +29,7 @@ Data files are too large for GitHub. The extraction scripts and assembled DataFr
 *Check 4. and make changes, 4 possible combinations of DOS information, composition ElementProperty, individual ElementProperty*
 
 ```
-1. Data extraction        extract_dos_features.py
+1. Data extraction        extract_dos_features.py  (local, not in repo)
    - Raw DFT DOS JSONs -> band edge energies, orbital character -> dos_features.parquet
 
 2. DataFrame assembly     build_dataframes.py  (local, not in repo)

@@ -54,6 +54,7 @@ Data files are too large for GitHub. The extraction scripts and assembled DataFr
    - Alloy-group-based train/test split: held-out chemistries (not just held-out mixing fractions)
    - Ablation across 4 feature sets × 2 scopes × 2 approaches (see below)
    - Feature importance analysis for chemical interpretation
+   - Use case C (DOS) accuracy is poor against A (MAGPIE). Worth investigating.
 ```
 
 ---
